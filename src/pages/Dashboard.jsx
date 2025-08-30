@@ -5,9 +5,12 @@ import TopBar from "../components/layout/TopBar";
 import CarbonProgressBar from "../components/tracking/CarbonProgressBar";
 import WeeklyChart from "../components/tracking/WeeklyChart";
 import LeafParticles from "../components/Leaderboard/LeafParticles";
+import { useEffect, useState, useMemo } from "react";
+import { listenToTrips } from "../lib/trips";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [trips, setTrips] = useState([]);
 
   const handleLogout = async () => {
     try {
@@ -17,9 +20,21 @@ const Dashboard = () => {
     }
   };
 
+  useEffect(() => {
+    if (!user) return;
+    const unsubscribe = listenToTrips(user.uid, setTrips);
+    return () => unsubscribe();
+  }, [user]);
+
   // Hardcoded data for now
-  const currentDailyUsage = 15.3; // kg CO2
   const dailyBudget = 20; // kg CO2
+
+  const currentDailyUsage = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return trips
+      .filter((t) => t.date && t.date.slice(0, 10) === today)
+      .reduce((sum, t) => sum + (t.co2Saved || t.co2_saved_kg || 0), 0);
+  }, [trips]);
 
   return (
     <div className="flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">
