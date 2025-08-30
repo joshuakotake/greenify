@@ -36,6 +36,14 @@ export default function TopBar({ user, onLogout }) {
               >
                 Planner
               </NavLink>
+              <NavLink
+                to="/leaderboard"
+                className={({ isActive }) =>
+                  `${linkBase} ${isActive ? linkActive : linkIdle}`
+                }
+              >
+                Leaderboard
+              </NavLink>
               {user && (
                 <>
                   <button className={`${linkBase} ${linkIdle}`}>
