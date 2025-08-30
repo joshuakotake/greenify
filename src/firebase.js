@@ -1,36 +1,19 @@
 import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBkC_qgWz-buw_RVnpBB7UNBomwTfvJULM",
-  authDomain: "greenify-ca166.firebaseapp.com",
-  projectId: "greenify-ca166",
-  storageBucket: "greenify-ca166.appspot.com",
-  messagingSenderId: "490974684125",
-  appId: "1:490974684125:web:eeb50d621068865a7d4c34",
-  measurementId: "G-36NKKY75E9",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Auth helpers
-const login = (email, password) =>
-  signInWithEmailAndPassword(auth, email, password);
-const register = (email, password) =>
-  createUserWithEmailAndPassword(auth, email, password);
-const logout = () => signOut(auth);
-const onUserStateChange = (callback) => onAuthStateChanged(auth, callback);
-
-export { db, auth, login, register, logout, onUserStateChange };
+export { app, auth, db };
