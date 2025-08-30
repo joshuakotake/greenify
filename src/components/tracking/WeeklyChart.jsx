@@ -63,12 +63,12 @@ const WeeklyCO2Chart = ({ dailyBudget = 20 }) => {
   const weeklyProgress = (totalUsage / totalBudget) * 100;
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="w-full max-w-4xl mx-auto bg-white">
       <div className="mb-6">
         <h3 className="text-xl font-semibold text-gray-800 mb-2">
           Weekly Carbon Footprint Overview
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-sm text-blue-600 font-medium">Total Usage</div>
             <div className="text-2xl font-bold text-blue-900">

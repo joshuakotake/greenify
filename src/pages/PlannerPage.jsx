@@ -5,6 +5,7 @@ import { totalSaved } from "../components/Planner/parts/utils";
 import "../components/Planner/Planner.css";
 
 import TopBar from "../components/layout/TopBar"; // ⬅ add this
+import EcoBackground from "../components/EcoBackground";
 import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
@@ -24,7 +25,10 @@ export default function PlannerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 relative">
+      {/* Eco Background */}
+      <EcoBackground />
+
       {/* Top navigation bar */}
       <TopBar user={user} onLogout={handleLogout} />
 
