@@ -44,7 +44,7 @@ const Dashboard = () => {
     return trips.reduce((sum, t) => sum + (t.co2_saved_kg || 0), 0);
   }, [trips]);
 
-  const co2PerKm = totalDistance > 0 ? (totalCO2Saved / totalDistance) : 0;
+  const co2PerKm = totalDistance > 0 ? totalCO2Saved / totalDistance : 0;
 
   return (
     <div className="flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">
@@ -94,26 +94,26 @@ const Dashboard = () => {
                   <span className="w-2 h-6 bg-green-500 rounded-full mr-3"></span>
                   Carbon Savings
                 </h3>
-               <div className="p-6 flex-1">
-                <div className="grid grid-cols-2 gap-4 h-full">
-                  <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100 flex flex-col justify-center">
-                    <div className="text-sm text-gray-600 mb-1">
-                      Total Distance Travelled
+                <div className="p-6  flex-1">
+                  <div className="grid grid-cols-2 gap-4 h-full ">
+                    <div className="text-center p-4 bg-green-50 rounded-lg flex flex-col justify-center">
+                      <div className="text-sm text-gray-600 mb-1">
+                        Total Distance Travelled
+                      </div>
+                      <div className="text-lg font-semibold text-green-700">
+                        {totalDistance.toFixed(2)} km
+                      </div>
                     </div>
-                    <div className="text-lg font-semibold text-green-700">
-                      {totalDistance.toFixed(2)} km
-                    </div>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100 flex flex-col justify-center">
-                    <div className="text-sm text-gray-600 mb-1">
-                      CO₂ Saved per km
-                    </div>
-                    <div className="text-lg font-semibold text-green-700">
-                      {co2PerKm.toFixed(3)} kg/km
+                    <div className="text-center p-4 bg-green-50 rounded-lg flex flex-col justify-center">
+                      <div className="text-sm text-gray-600 mb-1">
+                        CO₂ Saved per km
+                      </div>
+                      <div className="text-lg font-semibold text-green-700">
+                        {co2PerKm.toFixed(3)} kg/km
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
               </div>
             </div>
           </div>
