@@ -1,7 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 
-const linkBase =
-  "px-3 py-2 rounded-md text-sm font-medium transition-colors";
+const linkBase = "px-3 py-2 rounded-md text-sm font-medium transition-colors";
 const linkActive = "bg-emerald-700 text-white";
 const linkIdle = "text-gray-700 hover:bg-gray-200";
 
@@ -16,7 +15,7 @@ export default function TopBar({ user, onLogout }) {
               to="/dashboard"
               className="text-xl font-semibold text-gray-900"
             >
-              Carbon Tracker
+              Greenify
             </Link>
             <div className="hidden sm:flex items-center gap-2">
               <NavLink

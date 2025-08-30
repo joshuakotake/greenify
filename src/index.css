@@ -1,1 +1,11 @@
+/* @font-face {
+  font-family: SourceSerif4;
+  src: url("/assets/fonts/SourceSerif4-VariableFont_opsz,wght.ttf")
+    format("truetype");
+} */
+
 @import "tailwindcss";
+/* 
+@theme {
+  --font-serif: SourceSerif4, "serif";
+} */

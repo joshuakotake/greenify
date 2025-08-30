@@ -10,13 +10,21 @@ export default function MapBoxMap({ routeCoordinates }) {
   const startMarkerRef = useRef(null);
   const endMarkerRef = useRef(null);
 
-  const geojson = useMemo(() => ({
-    type: "FeatureCollection",
-    features: (routeCoordinates && routeCoordinates.length) ? [{
-      type: "Feature",
-      geometry: { type: "LineString", coordinates: routeCoordinates }
-    }] : []
-  }), [routeCoordinates]);
+  const geojson = useMemo(
+    () => ({
+      type: "FeatureCollection",
+      features:
+        routeCoordinates && routeCoordinates.length
+          ? [
+              {
+                type: "Feature",
+                geometry: { type: "LineString", coordinates: routeCoordinates },
+              },
+            ]
+          : [],
+    }),
+    [routeCoordinates]
+  );
 
   // init once
   useEffect(() => {
@@ -29,7 +37,10 @@ export default function MapBoxMap({ routeCoordinates }) {
       zoom: 12,
       attributionControl: false,
     });
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(
+      new mapboxgl.NavigationControl({ showCompass: false }),
+      "top-right"
+    );
     mapRef.current = map;
 
     return () => {
@@ -60,7 +71,11 @@ export default function MapBoxMap({ routeCoordinates }) {
         id: "route-line",
         type: "line",
         source: "route",
-        paint: { "line-color": "#2563eb", "line-width": 4, "line-opacity": 0.9 }
+        paint: {
+          "line-color": "#2563eb",
+          "line-width": 4,
+          "line-opacity": 0.9,
+        },
       });
 
       const start = routeCoordinates[0];
@@ -70,8 +85,12 @@ export default function MapBoxMap({ routeCoordinates }) {
       if (startMarkerRef.current) startMarkerRef.current.remove();
       if (endMarkerRef.current) endMarkerRef.current.remove();
 
-      startMarkerRef.current = new mapboxgl.Marker({ color: "#16a34a" }).setLngLat(start).addTo(map);
-      endMarkerRef.current   = new mapboxgl.Marker({ color: "#ef4444" }).setLngLat(end).addTo(map);
+      startMarkerRef.current = new mapboxgl.Marker({ color: "#16a34a" })
+        .setLngLat(start)
+        .addTo(map);
+      endMarkerRef.current = new mapboxgl.Marker({ color: "#ef4444" })
+        .setLngLat(end)
+        .addTo(map);
 
       // fit bounds
       const lons = routeCoordinates.map(([lon]) => lon);
@@ -83,8 +102,14 @@ export default function MapBoxMap({ routeCoordinates }) {
       map.fitBounds(bounds, { padding: 40, duration: 500 });
     } else {
       // clear markers if no route
-      if (startMarkerRef.current) { startMarkerRef.current.remove(); startMarkerRef.current = null; }
-      if (endMarkerRef.current)   { endMarkerRef.current.remove();   endMarkerRef.current   = null; }
+      if (startMarkerRef.current) {
+        startMarkerRef.current.remove();
+        startMarkerRef.current = null;
+      }
+      if (endMarkerRef.current) {
+        endMarkerRef.current.remove();
+        endMarkerRef.current = null;
+      }
     }
   }, [geojson, routeCoordinates]);
 
