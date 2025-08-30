@@ -3,7 +3,7 @@ import { auth } from "../firebase";
 import { useAuth } from "../hooks/useAuth";
 import TopBar from "../components/layout/TopBar";
 import CarbonProgressBar from "../components/tracking/CarbonProgressBar";
-import WeeklyChart from "../components/tracking/WeeklyChart";
+import WeeklyCO2Chart from "../components/tracking/WeeklyChart";
 import LeafParticles from "../components/Leaderboard/LeafParticles";
 import { useEffect, useState, useMemo } from "react";
 import { listenToTrips } from "../lib/trips";
@@ -133,7 +133,7 @@ const Dashboard = () => {
                 </p>
               </div>
               <div className="p-6 flex-1">
-                <WeeklyChart dailyBudget={dailyBudget} />
+                <WeeklyCO2Chart trips={trips} dailyBudget={dailyBudget} />
               </div>
             </div>
           </div>

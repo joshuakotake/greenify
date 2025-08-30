@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -11,17 +11,26 @@ import {
   Cell,
 } from "recharts";
 
-const WeeklyCO2Chart = ({ dailyBudget = 20 }) => {
-  // Hardcoded sample data - replace with real data later
-  const weeklyData = [
-    { day: "Mon", usage: 18.5, budget: dailyBudget },
-    { day: "Tue", usage: 22.3, budget: dailyBudget },
-    { day: "Wed", usage: 15.7, budget: dailyBudget },
-    { day: "Thu", usage: 25.1, budget: dailyBudget },
-    { day: "Fri", usage: 19.2, budget: dailyBudget },
-    { day: "Sat", usage: 12.8, budget: dailyBudget },
-    { day: "Sun", usage: 16.4, budget: dailyBudget },
-  ];
+const WeeklyCO2Chart = ({ trips, dailyBudget = 20 }) => {
+  // Calculate daily usage for the past 7 days
+  const weeklyData = useMemo(() => {
+    const days = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const day = new Date(now);
+      day.setDate(now.getDate() - i);
+      const dayStr = day.toISOString().slice(0, 10);
+      const usage = trips
+        .filter((t) => t.date && t.date.slice(0, 10) === dayStr)
+        .reduce((sum, t) => sum + (t.co2Saved || t.co2_saved_kg || 0), 0);
+      days.push({
+        day: day.toLocaleDateString(undefined, { weekday: "short" }),
+        usage,
+        budget: dailyBudget,
+      });
+    }
+    return days;
+  }, [trips, dailyBudget]);
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }) => {
