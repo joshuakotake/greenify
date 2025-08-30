@@ -8,7 +8,9 @@ import EcoBackground from "../components/EcoBackground";
 import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
-import { addTrip, listenToTrips } from "../lib/trips"; // <-- Add this import
+import { listenToTrips } from "../lib/trips"; // <-- Add this import
+import { addTripAndUpdatePoints } from "../components/Leaderboard/calculations/"; // adjust path
+
 
 export default function PlannerPage() {
   const { user } = useAuth();
@@ -32,9 +34,17 @@ export default function PlannerPage() {
 
   const handleAddTrip = async (trip) => {
     if (!user) return;
-    await addTrip(user.uid, { ...trip, date: new Date().toISOString() });
+
+    const tripWithDate = {
+      ...trip,
+      id: crypto.randomUUID(), // unique ID for trip
+      date: new Date().toISOString(),
+    };
+
+    await addTripAndUpdatePoints(user.uid, tripWithDate);
     setOpen(false);
   };
+
 
   return (
     <div className="min-h-screen bg-gray-100 relative">
