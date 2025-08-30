@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import AddTripModal from "../components/Planner/parts/AddTripModal";
 import TripCard from "../components/Planner/parts/TripCard";
 import { totalSaved } from "../components/Planner/parts/utils";
 import "../components/Planner/Planner.css";
-
-import TopBar from "../components/layout/TopBar"; // ⬅ add this
+import TopBar from "../components/layout/TopBar";
 import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import { addTrip, listenToTrips } from "../lib/trips";
 
 export default function PlannerPage() {
   const { user } = useAuth();
@@ -15,12 +15,27 @@ export default function PlannerPage() {
   const [trips, setTrips] = useState([]);
   const saved = useMemo(() => totalSaved(trips), [trips]);
 
+  useEffect(() => {
+    if (!user) return;
+    const unsubscribe = listenToTrips(user.uid, setTrips);
+    return () => unsubscribe();
+  }, [user]);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
     } catch (error) {
       console.error("Error signing out:", error);
     }
+  };
+
+  const handleAddTrip = async (trip) => {
+    if (!user) return;
+    await addTrip(user.uid, {
+      ...trip,
+      date: new Date().toISOString(), // Always add date!
+    });
+    setOpen(false);
   };
 
   return (
@@ -64,10 +79,7 @@ export default function PlannerPage() {
           {open && (
             <AddTripModal
               onClose={() => setOpen(false)}
-              onConfirm={(trip) => {
-                setTrips((prev) => [trip, ...prev]);
-                setOpen(false);
-              }}
+              onConfirm={handleAddTrip}
             />
           )}
         </section>

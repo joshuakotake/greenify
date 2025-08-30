@@ -1,12 +1,78 @@
+import React, { useEffect, useState, useMemo } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuth } from "../hooks/useAuth";
 import TopBar from "../components/layout/TopBar";
 import CarbonProgressBar from "../components/tracking/CarbonProgressBar";
 import WeeklyChart from "../components/tracking/WeeklyChart";
+import { listenToTrips } from "../lib/trips";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [trips, setTrips] = useState([]);
+
+  useEffect(() => {
+    if (!user) return;
+    const unsubscribe = listenToTrips(user.uid, setTrips);
+    return () => unsubscribe();
+  }, [user]);
+
+  // Example aggregations:
+  const currentDailyUsage = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return trips
+      .filter((t) => t.date && t.date.slice(0, 10) === today)
+      .reduce((sum, t) => sum + (t.co2Saved || t.co2_saved_kg || 0), 0);
+  }, [trips]);
+
+  const monthlyCO2Saved = useMemo(() => {
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+    return trips
+      .filter(t => {
+        const d = t.date ? new Date(t.date) : null;
+        return d && d.getMonth() === month && d.getFullYear() === year;
+      })
+      .reduce((sum, t) => sum + (t.co2Saved || t.co2_saved_kg || 0), 0);
+  }, [trips]);
+
+  const weeklyEnergySaved = useMemo(() => {
+    // Example: 1 kg CO2 saved = 1.8 kWh (adjust as needed)
+    const now = new Date();
+    const weekAgo = new Date();
+    weekAgo.setDate(now.getDate() - 6);
+    return trips
+      .filter(t => {
+        const d = t.date ? new Date(t.date) : null;
+        return d && d >= weekAgo && d <= now;
+      })
+      .reduce((sum, t) => sum + ((t.co2Saved || t.co2_saved_kg || 0) * 1.8), 0);
+  }, [trips]);
+
+  const dailyBudget = 20; // Example static value
+
+  const currentStreak = useMemo(() => {
+    let streak = 0;
+    let day = new Date();
+    for (let i = 0; i < 30; i++) {
+      const dayStr = day.toISOString().slice(0, 10);
+      const tripsForDay = trips.filter(t => t.date && t.date.slice(0, 10) === dayStr);
+      if (tripsForDay.length === 0) {
+        // No trips for this day, streak ends
+        break;
+      }
+      const dayUsage = tripsForDay.reduce((sum, t) => sum + (t.co2Saved || t.co2_saved_kg || 0), 0);
+      if (dayUsage < dailyBudget) {
+        streak++;
+        day.setDate(day.getDate() - 1);
+      } else {
+        // Over budget, streak ends
+        break;
+      }
+    }
+    return streak;
+  }, [trips, dailyBudget]);
 
   const handleLogout = async () => {
     try {
@@ -16,10 +82,6 @@ const Dashboard = () => {
     }
   };
 
-  // Hardcoded data for now
-  const currentDailyUsage = 15.3; // kg CO2
-  const dailyBudget = 20; // kg CO2
-  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <TopBar user={user} onLogout={handleLogout} />
@@ -67,7 +129,7 @@ const Dashboard = () => {
                   <div className="text-2xl mb-2">⚡</div>
                   <div className="text-sm text-gray-600 mb-1">Energy Equivalent</div>
                   <div className="text-xl font-bold text-amber-700">
-                    {((dailyBudget - currentDailyUsage) * 1.8).toFixed(1)} kWh
+                    {currentDailyUsage.toFixed(2)} kg
                   </div>
                   <div className="text-xs text-amber-600 mt-1">
                     {Math.round((dailyBudget - currentDailyUsage) * 1.8)} hrs of home power
@@ -95,7 +157,7 @@ const Dashboard = () => {
                 <p className="text-indigo-100 text-sm">Your carbon footprint trends and patterns</p>
               </div>
               <div className="p-6">
-                <WeeklyChart dailyBudget={dailyBudget} />
+                <WeeklyChart trips={trips} dailyBudget={dailyBudget} />
               </div>
             </div>
           </div>
@@ -106,21 +168,27 @@ const Dashboard = () => {
           <div className="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="text-3xl mb-3">📊</div>
             <div className="text-sm text-gray-500 uppercase tracking-wide mb-1">This Month</div>
-            <div className="text-2xl font-bold text-gray-900">348.2 kg</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {monthlyCO2Saved.toFixed(1)} kg
+            </div>
             <div className="text-sm text-green-600 mt-1">↓ 12% vs last month</div>
           </div>
           
           <div className="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="text-3xl mb-3">🔥</div>
             <div className="text-sm text-gray-500 uppercase tracking-wide mb-1">Current Streak</div>
-            <div className="text-2xl font-bold text-gray-900">5 Days</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {currentStreak} Days
+            </div>
             <div className="text-sm text-orange-600 mt-1">Under budget</div>
           </div>
           
           <div className="bg-white rounded-2xl shadow-lg p-6 text-center border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="text-3xl mb-3">⚡</div>
             <div className="text-sm text-gray-500 uppercase tracking-wide mb-1">Energy Saved</div>
-            <div className="text-2xl font-bold text-gray-900">32.4 kWh</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {weeklyEnergySaved.toFixed(1)} kWh
+            </div>
             <div className="text-sm text-amber-600 mt-1">This week</div>
           </div>
           
