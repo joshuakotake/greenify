@@ -4,7 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-export default function MapBoxMap({ routeCoordinates }) {
+export default function MapBoxMap({ routeCoordinates, mapStyle = "mapbox://styles/mapbox/streets-v12" }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const startMarkerRef = useRef(null);
@@ -30,12 +30,13 @@ export default function MapBoxMap({ routeCoordinates }) {
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
     mapboxgl.accessToken = TOKEN;
+
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: "mapbox://styles/mapbox/light-v11",
+      style: mapStyle,                         // ✅ Use Mapbox Streets (default)
       center: [151.205, -33.87],
       zoom: 12,
-      attributionControl: false,
+      attributionControl: true,                // (good practice for Streets)
     });
     map.addControl(
       new mapboxgl.NavigationControl({ showCompass: false }),
@@ -49,7 +50,7 @@ export default function MapBoxMap({ routeCoordinates }) {
       map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [mapStyle]);
 
   // update route + markers whenever coordinates change
   useEffect(() => {
@@ -72,9 +73,9 @@ export default function MapBoxMap({ routeCoordinates }) {
         type: "line",
         source: "route",
         paint: {
-          "line-color": "#2563eb",
+          "line-color": "#14532d",
           "line-width": 4,
-          "line-opacity": 0.9,
+          "line-opacity": 0.95,
         },
       });
 
