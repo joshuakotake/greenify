@@ -1,18 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+// src/Pages.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
 import AuthRoute from "./components/AuthRoute";
 import ProtectedRoute from "./components/ProtectedRoutes";
-import LoginPage from "./pages/LoginPage";
+
 import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
+import PlannerPage from "./pages/PlannerPage";
 
-function App() {
+export default function Pages() {
   return (
     <Routes>
-      {/* Public route */}
+      {/* Public */}
       <Route path="/" element={<LandingPage />} />
 
-      {/* Auth routes - redirect to dashboard if logged in */}
+      {/* Auth (redirect to dashboard if already logged in) */}
       <Route
         path="/login"
         element={
@@ -30,7 +33,7 @@ function App() {
         }
       />
 
-      {/* Protected routes - require authentication */}
+      {/* Protected */}
       <Route
         path="/dashboard"
         element={
@@ -39,12 +42,17 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/planner"
+        element={
+          <ProtectedRoute>
+            <PlannerPage />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Add more protected routes here */}
-      {/* <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} /> */}
-      {/* <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} /> */}
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
-
-export default App;
