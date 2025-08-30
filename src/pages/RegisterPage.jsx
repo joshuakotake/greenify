@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { signUp } from "../lib/auth";
-import { getDatabase, ref, set } from "firebase/database";
-import { app } from "../firebase";
+import EcoBackground from "../components/EcoBackground";
+import LeafParticles from "../components/Leaderboard/LeafParticles";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -43,90 +43,165 @@ const RegisterPage = () => {
     }
   };
 
-  const testWrite = () => {
-    const db = getDatabase(app);
-    set(ref(db, "test"), { hello: "world" })
-      .then(() => alert("Write success!"))
-      .catch((err) => alert("Write failed: " + err.message));
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <EcoBackground />
+      <LeafParticles />
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-2">
+            Join Greenify
           </h2>
+          <p className="text-lg text-gray-600">
+            Start your journey to a greener future
+          </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleEmailSignup}>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
+
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
+          <form className="space-y-6" onSubmit={handleEmailSignup}>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center">
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                  placeholder="Enter your full name"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                  placeholder="Create a password"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300"
+                  placeholder="Confirm your password"
+                />
+              </div>
             </div>
-          )}
 
-          <div className="space-y-4">
-            <input
-              type="text"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Full name"
-            />
-            <input
-              type="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Email address"
-            />
-            <input
-              type="password"
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Password"
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              required
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Confirm password"
-            />
-          </div>
-
-          <div className="space-y-4">
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 px-4 rounded-xl text-lg font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {loading ? "Creating account..." : "Sign up"}
+              <span className="relative z-10 flex items-center justify-center">
+                {loading ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Creating account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </button>
-          </div>
+          </form>
 
-          <div className="text-center">
-            <Link to="/login" className="text-blue-600 hover:text-blue-500">
-              Already have an account? Sign in
+          <div className="mt-6 text-center">
+            <Link
+              to="/login"
+              className="text-green-600 hover:text-green-700 font-medium transition-colors duration-300"
+            >
+              Already have an account?{" "}
+              <span className="underline">Sign in</span>
             </Link>
           </div>
-          <button
-            type="button"
-            onClick={testWrite}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          >
-            Test Realtime DB Write
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

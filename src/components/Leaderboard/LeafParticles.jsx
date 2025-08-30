@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useMemo } from "react";
 import "./LeafParticles.css";
 
 const NUM_LEAVES = 12;
@@ -8,21 +8,29 @@ function random(min, max) {
 }
 
 const LeafParticles = () => {
-  useEffect(() => {
-    // Optionally, you could randomize animation delays here if needed
+  // Generate leaf properties only once using useMemo
+  const leafProperties = useMemo(() => {
+    return Array.from({ length: NUM_LEAVES }).map((_, i) => ({
+      id: i,
+      left: random(0, 100),
+      animationDuration: random(8, 16),
+      animationDelay: random(0, 8),
+      scale: random(0.5, 1.2),
+      rotation: random(0, 360),
+    }));
   }, []);
 
   return (
     <div className="leaf-particles">
-      {Array.from({ length: NUM_LEAVES }).map((_, i) => (
+      {leafProperties.map((leaf) => (
         <svg
-          key={i}
+          key={leaf.id}
           className="leaf"
           style={{
-            left: `${random(0, 100)}vw`,
-            animationDuration: `${random(8, 16)}s`,
-            animationDelay: `${random(0, 8)}s`,
-            transform: `scale(${random(0.5, 1.2)}) rotate(${random(0, 360)}deg)`,
+            left: `${leaf.left}vw`,
+            animationDuration: `${leaf.animationDuration}s`,
+            animationDelay: `${leaf.animationDelay}s`,
+            transform: `scale(${leaf.scale}) rotate(${leaf.rotation}deg)`,
           }}
           width="32"
           height="32"
