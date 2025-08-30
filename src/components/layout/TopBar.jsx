@@ -44,6 +44,16 @@ export default function TopBar({ user, onLogout }) {
               >
                 Leaderboard
               </NavLink>
+              {user && (
+                <>
+                  <button className={`${linkBase} ${linkIdle}`}>
+                    Log Trip
+                  </button>
+                  <button className={`${linkBase} ${linkIdle}`}>
+                    Set Goals
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
