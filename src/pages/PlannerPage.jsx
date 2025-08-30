@@ -1,20 +1,26 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import AddTripModal from "../components/Planner/parts/AddTripModal";
 import TripCard from "../components/Planner/parts/TripCard";
 import { totalSaved } from "../components/Planner/parts/utils";
 import "../components/Planner/Planner.css";
-
-import TopBar from "../components/layout/TopBar"; // ⬅ add this
+import TopBar from "../components/layout/TopBar";
 import EcoBackground from "../components/EcoBackground";
 import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import { addTrip, listenToTrips } from "../lib/trips"; // <-- Add this import
 
 export default function PlannerPage() {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [trips, setTrips] = useState([]);
   const saved = useMemo(() => totalSaved(trips), [trips]);
+
+  useEffect(() => {
+    if (!user) return;
+    const unsubscribe = listenToTrips(user.uid, setTrips);
+    return () => unsubscribe();
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -24,15 +30,16 @@ export default function PlannerPage() {
     }
   };
 
+  const handleAddTrip = async (trip) => {
+    if (!user) return;
+    await addTrip(user.uid, { ...trip, date: new Date().toISOString() });
+    setOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 relative">
-      {/* Eco Background */}
       <EcoBackground />
-
-      {/* Top navigation bar */}
       <TopBar user={user} onLogout={handleLogout} />
-
-      {/* Page content */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <section className="planner-section">
           <div className="row head">
@@ -41,7 +48,6 @@ export default function PlannerPage() {
               + Add Trip
             </button>
           </div>
-
           {trips.length === 0 ? (
             <div className="panel empty">
               No trips yet. Add your first sustainable journey.
@@ -64,14 +70,10 @@ export default function PlannerPage() {
               </div>
             </div>
           )}
-
           {open && (
             <AddTripModal
               onClose={() => setOpen(false)}
-              onConfirm={(trip) => {
-                setTrips((prev) => [trip, ...prev]);
-                setOpen(false);
-              }}
+              onConfirm={handleAddTrip} // <-- Use the database handler
             />
           )}
         </section>
