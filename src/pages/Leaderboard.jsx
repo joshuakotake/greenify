@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import "../components/Leaderboard/Leaderboard.css";
+import LeafParticles from "../components/Leaderboard/LeafParticles";
 
 const Leaderboard = () => {
   const { user } = useAuth();
@@ -43,7 +44,8 @@ const Leaderboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100" style={{ position: "relative", overflow: "hidden" }}>
+      <LeafParticles />
       <TopBar user={user} onLogout={handleLogout} />
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="leaderboard-container">
