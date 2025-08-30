@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { signUp } from "../lib/auth";
+import { getDatabase, ref, set } from "firebase/database";
+import { app } from "../firebase";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -22,16 +22,6 @@ const RegisterPage = () => {
     });
   };
 
-  const createUserDocument = async (user, additionalData = {}) => {
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      name: user.displayName || additionalData.name,
-      email: user.email,
-      totalEmissions: 0,
-      createdAt: new Date(),
-    });
-  };
-
   const handleEmailSignup = async (e) => {
     e.preventDefault();
 
@@ -44,19 +34,20 @@ const RegisterPage = () => {
     setError("");
 
     try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
-      await updateProfile(user, { displayName: formData.name });
-      await createUserDocument(user, { name: formData.name });
+      await signUp(formData.email, formData.password, formData.name);
       navigate("/dashboard");
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const testWrite = () => {
+    const db = getDatabase(app);
+    set(ref(db, "test"), { hello: "world" })
+      .then(() => alert("Write success!"))
+      .catch((err) => alert("Write failed: " + err.message));
   };
 
   return (
@@ -136,6 +127,13 @@ const RegisterPage = () => {
               Already have an account? Sign in
             </Link>
           </div>
+          <button
+            type="button"
+            onClick={testWrite}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            Test Realtime DB Write
+          </button>
         </form>
       </div>
     </div>

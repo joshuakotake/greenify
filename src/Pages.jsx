@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import PlannerPage from "./pages/PlannerPage";
+import Leaderboard from "./pages/Leaderboard";
 
 export default function Pages() {
   return (
@@ -50,7 +51,14 @@ export default function Pages() {
           </ProtectedRoute>
         }
       />
-
+      <Route
+        path="/leaderboard"
+        element={
+          <ProtectedRoute>
+            <Leaderboard />
+          </ProtectedRoute>
+        }
+      />
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
