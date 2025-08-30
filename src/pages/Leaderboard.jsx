@@ -5,7 +5,6 @@ import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import LeafParticles from "../components/Leaderboard/LeafParticles";
-import EcoBackground from "../components/EcoBackground";
 
 const Leaderboard = () => {
   const { user } = useAuth();
@@ -44,21 +43,11 @@ const Leaderboard = () => {
   }, []);
 
   const getRankIcon = (rank) => {
-    switch (rank) {
-      case 1:
-        return "🥇";
-      case 2:
-        return "🥈";
-      case 3:
-        return "🥉";
-      default:
-        return `#${rank}`;
-    }
+    return `#${rank}`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <EcoBackground />
+    <div className="flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">
       <LeafParticles />
       <TopBar user={user} onLogout={handleLogout} />
 

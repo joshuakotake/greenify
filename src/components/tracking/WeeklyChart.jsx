@@ -60,7 +60,6 @@ const WeeklyCO2Chart = ({ dailyBudget = 20 }) => {
   const daysOverBudget = weeklyData.filter(
     (day) => day.usage > day.budget
   ).length;
-  const weeklyProgress = (totalUsage / totalBudget) * 100;
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white">
@@ -107,7 +106,7 @@ const WeeklyCO2Chart = ({ dailyBudget = 20 }) => {
       </div>
 
       {/* Bar Chart */}
-      <div className="h-80 mb-4">
+      <div className="h-70 mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={weeklyData}
@@ -151,7 +150,7 @@ const WeeklyCO2Chart = ({ dailyBudget = 20 }) => {
           </BarChart>
         </ResponsiveContainer>
       </div>
-
+      {/* 
       {/* Legend and weekly summary */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-6">
@@ -173,17 +172,6 @@ const WeeklyCO2Chart = ({ dailyBudget = 20 }) => {
             ></div>
             <span className="text-sm text-gray-600">Daily Limit</span>
           </div>
-        </div>
-
-        <div className="text-sm text-gray-600">
-          Weekly Progress:
-          <span
-            className={`ml-1 font-medium ${
-              weeklyProgress > 100 ? "text-red-600" : "text-green-600"
-            }`}
-          >
-            {weeklyProgress.toFixed(1)}%
-          </span>
         </div>
       </div>
     </div>

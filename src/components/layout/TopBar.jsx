@@ -22,7 +22,7 @@ export default function TopBar({ onLogout }) {
               className="flex items-center space-x-3 text-green-700"
             >
               <GreenifyLogo color="currentColor" size="w-6 h-6" />
-              <span className="text-xl font-semibold text-gray-900">
+              <span className="text-xl font-semibold text-gray-900 hover:text-green-700">
                 Greenify
               </span>
             </Link>

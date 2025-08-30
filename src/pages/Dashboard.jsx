@@ -5,7 +5,6 @@ import TopBar from "../components/layout/TopBar";
 import CarbonProgressBar from "../components/tracking/CarbonProgressBar";
 import WeeklyChart from "../components/tracking/WeeklyChart";
 import LeafParticles from "../components/Leaderboard/LeafParticles";
-import EcoBackground from "../components/EcoBackground";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -27,8 +26,8 @@ const Dashboard = () => {
       <LeafParticles />
       <TopBar user={user} onLogout={handleLogout} />
 
-      <main className="max-w-7xl mx-auto pt-5 px-4 sm:px-6 lg:px-8">
-        {/* Welcome Header */}
+      <main className="max-w-4xl mx-auto pt-20 pb-8 px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-medium text-gray-900 mb-2">
             Welcome back,{" "}
@@ -118,7 +117,7 @@ const Dashboard = () => {
                   Your carbon footprint trends
                 </p>
               </div>
-              <div className="p-4 flex-1">
+              <div className="p-6 flex-1">
                 <WeeklyChart dailyBudget={dailyBudget} />
               </div>
             </div>
