@@ -8,9 +8,8 @@ import LeafParticles from "../components/Leaderboard/LeafParticles";
 import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
-import { listenToTrips } from "../lib/trips"; // <-- Add this import
-import { addTripAndUpdatePoints } from "../components/Leaderboard/calculations/"; // adjust path
-
+import { listenToTrips } from "../lib/trips";
+import { addTripAndUpdatePoints } from "../components/Leaderboard/calculations/";
 
 export default function PlannerPage() {
   const { user } = useAuth();
@@ -44,7 +43,6 @@ export default function PlannerPage() {
     await addTripAndUpdatePoints(user.uid, tripWithDate);
     setOpen(false);
   };
-
 
   return (
     <div className="flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">
