@@ -36,6 +36,16 @@ export default function TopBar({ user, onLogout }) {
               >
                 Planner
               </NavLink>
+              {user && (
+                <>
+                  <button className={`${linkBase} ${linkIdle}`}>
+                    Log Trip
+                  </button>
+                  <button className={`${linkBase} ${linkIdle}`}>
+                    Set Goals
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
