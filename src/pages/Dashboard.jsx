@@ -3,11 +3,14 @@ import { auth } from "../firebase";
 import { useAuth } from "../hooks/useAuth";
 import TopBar from "../components/layout/TopBar";
 import CarbonProgressBar from "../components/tracking/CarbonProgressBar";
-import WeeklyChart from "../components/tracking/WeeklyChart";
+import WeeklyCO2Chart from "../components/tracking/WeeklyChart";
 import LeafParticles from "../components/Leaderboard/LeafParticles";
+import { useEffect, useState, useMemo } from "react";
+import { listenToTrips } from "../lib/trips";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [trips, setTrips] = useState([]);
 
   const handleLogout = async () => {
     try {
@@ -17,9 +20,31 @@ const Dashboard = () => {
     }
   };
 
+  useEffect(() => {
+    if (!user) return;
+    const unsubscribe = listenToTrips(user.uid, setTrips);
+    return () => unsubscribe();
+  }, [user]);
+
   // Hardcoded data for now
-  const currentDailyUsage = 15.3; // kg CO2
   const dailyBudget = 20; // kg CO2
+
+  const currentDailyUsage = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return trips
+      .filter((t) => t.date && t.date.slice(0, 10) === today)
+      .reduce((sum, t) => sum + (t.co2Saved || t.co2_saved_kg || 0), 0);
+  }, [trips]);
+
+  const totalDistance = useMemo(() => {
+    return trips.reduce((sum, t) => sum + (t.distance_km || 0), 0);
+  }, [trips]);
+
+  const totalCO2Saved = useMemo(() => {
+    return trips.reduce((sum, t) => sum + (t.co2_saved_kg || 0), 0);
+  }, [trips]);
+
+  const co2PerKm = totalDistance > 0 ? (totalCO2Saved / totalDistance) : 0;
 
   return (
     <div className="flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">
@@ -69,38 +94,26 @@ const Dashboard = () => {
                   <span className="w-2 h-6 bg-green-500 rounded-full mr-3"></span>
                   Carbon Savings
                 </h3>
-                <p className="text-green-700 text-sm">
-                  Today's environmental impact
-                </p>
-              </div>
-              <div className="p-6 flex-1">
+               <div className="p-6 flex-1">
                 <div className="grid grid-cols-2 gap-4 h-full">
                   <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100 flex flex-col justify-center">
-                    <div className="text-2xl mb-2">⚡</div>
                     <div className="text-sm text-gray-600 mb-1">
-                      Energy Equivalent
+                      Total Distance Travelled
                     </div>
                     <div className="text-lg font-semibold text-green-700">
-                      {((dailyBudget - currentDailyUsage) * 1.8).toFixed(1)} kWh
-                    </div>
-                    <div className="text-xs text-green-600 mt-1">
-                      {Math.round((dailyBudget - currentDailyUsage) * 1.8)} hrs
-                      of home power
+                      {totalDistance.toFixed(2)} km
                     </div>
                   </div>
                   <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100 flex flex-col justify-center">
-                    <div className="text-2xl mb-2">🔥</div>
                     <div className="text-sm text-gray-600 mb-1">
-                      Under Budget
+                      CO₂ Saved per km
                     </div>
                     <div className="text-lg font-semibold text-green-700">
-                      {currentDailyUsage < dailyBudget ? "3" : "0"} Days
-                    </div>
-                    <div className="text-xs text-green-600 mt-1">
-                      Current streak
+                      {co2PerKm.toFixed(3)} kg/km
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
@@ -118,7 +131,7 @@ const Dashboard = () => {
                 </p>
               </div>
               <div className="p-6 flex-1">
-                <WeeklyChart dailyBudget={dailyBudget} />
+                <WeeklyCO2Chart trips={trips} dailyBudget={dailyBudget} />
               </div>
             </div>
           </div>
