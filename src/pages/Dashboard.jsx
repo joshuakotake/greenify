@@ -19,7 +19,7 @@ const Dashboard = () => {
 
   // Hardcoded data for now
   const currentDailyUsage = 15.3; // kg CO2
-  const dailyBudget = 20; // kg CO2
+  const dailyBudget = 20;
 
   return (
     <div className="flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">

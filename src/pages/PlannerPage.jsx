@@ -1,14 +1,14 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import AddTripModal from "../components/Planner/parts/AddTripModal";
 import TripCard from "../components/Planner/parts/TripCard";
 import { totalSaved } from "../components/Planner/parts/utils";
 import "../components/Planner/Planner.css";
 import TopBar from "../components/layout/TopBar";
-import EcoBackground from "../components/EcoBackground";
+import LeafParticles from "../components/Leaderboard/LeafParticles";
 import { useAuth } from "../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
-import { addTrip, listenToTrips } from "../lib/trips"; // <-- Add this import
+import { addTrip, listenToTrips } from "../lib/trips";
 
 export default function PlannerPage() {
   const { user } = useAuth();
@@ -37,46 +37,161 @@ export default function PlannerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 relative">
-      <EcoBackground />
+    <div className="flex-col min-h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">
+      <LeafParticles />
       <TopBar user={user} onLogout={handleLogout} />
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <section className="planner-section">
-          <div className="row head">
-            <h1 className="title">Plan a Trip</h1>
-            <button className="btn" onClick={() => setOpen(true)}>
-              + Add Trip
-            </button>
-          </div>
-          {trips.length === 0 ? (
-            <div className="panel empty">
-              No trips yet. Add your first sustainable journey.
-            </div>
-          ) : (
-            <div className="row">
-              <div className="col panel">
-                <h3 className="h3">Trips</h3>
-                <div className="trip-grid">
-                  {trips.map((t) => (
-                    <TripCard key={t.id} t={t} />
-                  ))}
-                </div>
-              </div>
-              <div className="col panel">
-                <h3 className="h3">Summary</h3>
-                <p>
-                  Total CO₂ saved: <b>{saved.toFixed(2)} kg</b>
+
+      <main className="max-w-4xl mx-auto pt-20 pb-8 px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-medium text-gray-900 mb-2">
+            Trip Planner
+          </h1>
+          <p className="text-gray-600 max-w-2xl">
+            Plan your sustainable journeys and track the carbon savings of your
+            eco-friendly travel choices.
+          </p>
+        </div>
+        {trips.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-green-50 px-6 py-4 border-b border-green-100 flex justify-between items-center">
+              <div>
+                <h2 className="text-lg font-medium text-gray-900 mb-1">
+                  Your Trips
+                </h2>
+                <p className="text-green-700 text-sm">
+                  Start planning your sustainable journeys
                 </p>
               </div>
+              <button
+                onClick={() => setOpen(true)}
+                className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent"
+              >
+                <span className="relative z-10 flex items-center justify-center">
+                  Add Trip
+                  <svg
+                    className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              </button>
             </div>
-          )}
-          {open && (
-            <AddTripModal
-              onClose={() => setOpen(false)}
-              onConfirm={handleAddTrip} // <-- Use the database handler
-            />
-          )}
-        </section>
+            <div className="p-12 text-center">
+              <div className="text-4xl mb-4">🚲</div>
+              <p className="text-gray-500 mb-6">
+                No trips yet. Add your first sustainable journey.
+              </p>
+              <button
+                onClick={() => setOpen(true)}
+                className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-xl text-base font-semibold shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-transparent"
+              >
+                <span className="relative z-10 flex items-center justify-center">
+                  Plan your first trip
+                  <svg
+                    className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Trips Column */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-green-50 px-6 py-4 border-b border-green-100 flex justify-between items-center">
+                  <div>
+                    <h2 className="text-lg font-medium text-gray-900 mb-1">
+                      Your Trips
+                    </h2>
+                    <p className="text-green-700 text-sm">
+                      Recent sustainable journeys
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent"
+                  >
+                    <span className="relative z-10 flex items-center justify-center">
+                      Add Trip
+                      <svg
+                        className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                  </button>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    {trips.map((t) => (
+                      <TripCard key={t.id} t={t} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Summary Column */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-green-50 px-6 py-4 border-b border-green-100">
+                  <h2 className="text-lg font-medium text-gray-900 mb-1">
+                    Impact Summary
+                  </h2>
+                  <p className="text-green-700 text-sm">
+                    Your environmental contribution
+                  </p>
+                </div>
+                <div className="p-6">
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">🌱</div>
+                    <div className="text-2xl font-bold text-green-700 mb-1">
+                      {saved.toFixed(1)} kg
+                    </div>
+                    <div className="text-sm text-gray-600">Total CO₂ saved</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {open && (
+          <AddTripModal
+            onClose={() => setOpen(false)}
+            onConfirm={handleAddTrip}
+          />
+        )}
       </main>
     </div>
   );

@@ -38,7 +38,7 @@ export default function AddTripModal({ onClose, onConfirm }) {
     time_min: 0,
     co2_saved_kg: 0,
     emissions_kg: 0,
-    routeCoordinates: []
+    routeCoordinates: [],
   });
 
   useEffect(() => {
@@ -58,7 +58,9 @@ export default function AddTripModal({ onClose, onConfirm }) {
           const speed = 25; // km/h
           const time_min = Math.round((distance_km / speed) * 60);
 
-          const emissions = computeEmissions(distance_km, "transit", { baseline: "car" });
+          const emissions = computeEmissions(distance_km, "transit", {
+            baseline: "car",
+          });
           const routeCoordinates = buildTransitPolyline(from, to);
 
           if (!ignore)
@@ -69,12 +71,14 @@ export default function AddTripModal({ onClose, onConfirm }) {
               emissions_kg: emissions.emissions_kg,
               ef_selected: emissions.factors.selected_kg_per_km,
               ef_baseline: emissions.factors.baseline_kg_per_km,
-              routeCoordinates
+              routeCoordinates,
             });
         } else {
           // walk / bike / drive → Mapbox
           const r = await directions(from, to, mode);
-          const emissions = computeEmissions(r.distance_km, mode, { baseline: "car" });
+          const emissions = computeEmissions(r.distance_km, mode, {
+            baseline: "car",
+          });
 
           if (!ignore)
             setRoute({
@@ -82,7 +86,7 @@ export default function AddTripModal({ onClose, onConfirm }) {
               co2_saved_kg: emissions.saved_kg,
               emissions_kg: emissions.emissions_kg,
               ef_selected: emissions.factors.selected_kg_per_km,
-              ef_baseline: emissions.factors.baseline_kg_per_km
+              ef_baseline: emissions.factors.baseline_kg_per_km,
             });
         }
       } catch (e) {
@@ -110,8 +114,8 @@ export default function AddTripModal({ onClose, onConfirm }) {
           time_min: route.time_min,
           co2_saved_kg: route.co2_saved_kg,
           emissions_kg: route.emissions_kg,
-          polyline: route.routeCoordinates
-        }
+          polyline: route.routeCoordinates,
+        },
       })
     );
   };
@@ -119,8 +123,8 @@ export default function AddTripModal({ onClose, onConfirm }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-head">
-          <div className="modal-title">Add Trip</div>
+        <div className="modal-head px-2">
+          <div className="font-medium text-xl">Add Trip</div>
           <button className="close" aria-label="Close" onClick={onClose}>
             ×
           </button>
@@ -179,20 +183,29 @@ export default function AddTripModal({ onClose, onConfirm }) {
             </div>
             <div>
               <div className="stat-label">Mode:</div>
-              <div className="stat-sub">{mode}</div>
+              <div className="stat-sub">
+                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+              </div>
             </div>
           </div>
         </div>
 
         {err && <div style={{ marginTop: 10, color: "#b91c1c" }}>{err}</div>}
 
-        <div className="actions">
+        <div className="actions px-3">
           <button className="cancel" onClick={onClose}>
             Cancel
           </button>
           <div className="right">
-            <button className="confirm" disabled={disabled} onClick={confirm}>
-              {loading ? "Calculating…" : "Confirm Trip"}
+            <button
+              className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              disabled={disabled}
+              onClick={confirm}
+            >
+              <span className="relative z-10">
+                {loading ? "Calculating…" : "Confirm Trip"}
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </button>
           </div>
         </div>
