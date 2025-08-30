@@ -4,7 +4,10 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-export default function MapBoxMap({ routeCoordinates, mapStyle = "mapbox://styles/mapbox/streets-v12" }) {
+export default function MapBoxMap({
+  routeCoordinates,
+  mapStyle = "mapbox://styles/mapbox/streets-v12",
+}) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const startMarkerRef = useRef(null);
@@ -33,10 +36,10 @@ export default function MapBoxMap({ routeCoordinates, mapStyle = "mapbox://style
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: mapStyle,                         // ✅ Use Mapbox Streets (default)
+      style: mapStyle,
       center: [151.205, -33.87],
       zoom: 12,
-      attributionControl: true,                // (good practice for Streets)
+      attributionControl: true,
     });
     map.addControl(
       new mapboxgl.NavigationControl({ showCompass: false }),
