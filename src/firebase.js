@@ -8,6 +8,16 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+  getDocs
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBkC_qgWz-buw_RVnpBB7UNBomwTfvJULM",
@@ -33,4 +43,52 @@ const register = (email, password) =>
 const logout = () => signOut(auth);
 const onUserStateChange = (callback) => onAuthStateChanged(auth, callback);
 
-export { db, auth, login, register, logout, onUserStateChange };
+// Firestore helpers for emissions
+const addEmission = async (emissionData) => {
+  return await addDoc(collection(db, 'emissions'), {
+    ...emissionData,
+    timestamp: serverTimestamp()
+  });
+};
+
+const getUserEmissions = (uid, callback) => {
+  const q = query(
+    collection(db, 'emissions'),
+    where('uid', '==', uid),
+    orderBy('date', 'desc')
+  );
+  
+  return onSnapshot(q, (snapshot) => {
+    const emissions = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    callback(emissions);
+  });
+};
+
+// Get all users for leaderboard
+const getAllUsersEmissions = async () => {
+  const q = query(collection(db, 'emissions'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export { 
+  db, 
+  auth, 
+  login, 
+  register, 
+  logout, 
+  onUserStateChange,
+  addEmission,
+  getUserEmissions,
+  getAllUsersEmissions,
+  serverTimestamp,
+  collection,
+  addDoc,
+  query,
+  where,
+  orderBy,
+  onSnapshot
+};
