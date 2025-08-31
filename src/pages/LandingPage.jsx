@@ -5,7 +5,7 @@ import EcoBackground from "../components/EcoBackground";
 
 const LandingPage = () => {
   return (
-    <div className="h-screen bg-gradient-to-br from-green-50 to-blue-50 relative">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-green-50 to-blue-50 relative">
       <EcoBackground />
       <LeafParticles />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,7 +18,7 @@ const LandingPage = () => {
                   strings: [
                     "Carbon Streaks",
                     "Green Points",
-                    "Eco Challenge",
+                    "CO2 Savings",
                     "Climate Wins",
                     "Planet Progress",
                   ],
@@ -29,13 +29,14 @@ const LandingPage = () => {
             </span>
           </h1>
           <p className="mt-6 text-xl text-gray-600 max-w-2xl">
-            Join a community of eco-conscious individuals. Track your emissions,
-            compete with friends, and make a positive impact on the planet.
+            Join a community of eco-conscious individuals. Track your carbon
+            savings, compete with friends, and make a positive impact on the
+            planet.
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row  gap-4 sm:gap-6">
+          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 w-full max-w-md mx-auto">
             <Link
               to="/register"
-              className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-transparent"
+              className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl flex items-center justify-center"
             >
               <span className="relative z-10 flex items-center justify-center">
                 Get Started
@@ -57,7 +58,7 @@ const LandingPage = () => {
             </Link>
             <Link
               to="/login"
-              className="group relative bg-white hover:bg-gray-50 text-green-700 px-8 py-4 rounded-xl text-lg font-semibold border-2 border-green-600 hover:border-green-700 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="group relative bg-white hover:bg-gray-50 text-green-700 px-8 py-4 rounded-xl text-lg font-semibold border-2 border-green-600 hover:border-green-700 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl flex items-center justify-center"
             >
               <span className="flex items-center justify-center">
                 Sign In

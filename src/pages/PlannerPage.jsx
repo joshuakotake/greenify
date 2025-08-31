@@ -49,7 +49,7 @@ export default function PlannerPage() {
       <LeafParticles />
       <TopBar user={user} onLogout={handleLogout} />
 
-      <main className="max-w-4xl mx-auto pt-20 pb-8 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-4xl pt-5 mx-auto pb-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-medium text-gray-900 mb-2">
@@ -57,12 +57,13 @@ export default function PlannerPage() {
           </h1>
           <p className="text-gray-600 max-w-2xl">
             Plan your sustainable journeys and track the carbon savings of your
-            eco-friendly travel choices.
+            eco-friendly travel choices. Every eco-friendly trip counts towards
+            a greener future.
           </p>
         </div>
         {trips.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="bg-green-50 px-6 py-4 border-b border-green-100 flex justify-between items-center">
+          <div className="bg-white rounded-md shadow-sm border-gray-200">
+            <div className="bg-green-50 rounded-t px-6 py-4 border-b border-green-100 flex justify-between items-center">
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-1">
                   Your Trips
@@ -71,28 +72,6 @@ export default function PlannerPage() {
                   Start planning your sustainable journeys
                 </p>
               </div>
-              <button
-                onClick={() => setOpen(true)}
-                className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent"
-              >
-                <span className="relative z-10 flex items-center justify-center">
-                  Add Trip
-                  <svg
-                    className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform duration-300"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              </button>
             </div>
             <div className="p-12 text-center">
               <div className="text-4xl mb-4">🚲</div>
@@ -127,8 +106,8 @@ export default function PlannerPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Trips Column */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="bg-green-50 px-6 py-4 border-b border-green-100 flex justify-between items-center">
+              <div className="bg-white rounded-md shadow-sm border border-gray-200">
+                <div className="bg-green-50 rounded-t px-6 py-4 border-b border-green-100 flex justify-between items-center">
                   <div>
                     <h2 className="text-lg font-medium text-gray-900 mb-1">
                       Your Trips
@@ -139,23 +118,10 @@ export default function PlannerPage() {
                   </div>
                   <button
                     onClick={() => setOpen(true)}
-                    className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent"
+                    className="group relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
                   >
                     <span className="relative z-10 flex items-center justify-center">
-                      Add Trip
-                      <svg
-                        className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform duration-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
+                      <span className="inline xs:hidden">Add Trip +</span>
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-green-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                   </button>
@@ -172,8 +138,8 @@ export default function PlannerPage() {
 
             {/* Summary Column */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="bg-green-50 px-6 py-4 border-b border-green-100">
+              <div className="bg-white rounded-md shadow-sm border border-gray-200">
+                <div className="bg-green-50 rounded-t px-6 py-4 border-b border-green-100">
                   <h2 className="text-lg font-medium text-gray-900 mb-1">
                     Impact Summary
                   </h2>

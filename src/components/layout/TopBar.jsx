@@ -61,7 +61,7 @@ export default function TopBar({ onLogout }) {
             {/* Desktop logout button */}
             <button
               onClick={onLogout}
-              className="hidden sm:block text-gray-500 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              className="hidden sm:block cursor-pointer text-gray-500 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Sign Out
             </button>

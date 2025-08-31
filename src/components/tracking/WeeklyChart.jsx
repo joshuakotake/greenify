@@ -11,8 +11,8 @@ import {
   Cell,
 } from "recharts";
 
-const WeeklyCO2Chart = ({ trips, dailyBudget = 20 }) => {
-  // Calculate daily usage for the past 7 days
+const WeeklyCO2Chart = ({ trips, dailyBudget = 10 }) => {
+  // Calculate daily savings for the past 7 days
   const weeklyData = useMemo(() => {
     const days = [];
     const now = new Date();
@@ -20,13 +20,13 @@ const WeeklyCO2Chart = ({ trips, dailyBudget = 20 }) => {
       const day = new Date(now);
       day.setDate(now.getDate() - i);
       const dayStr = day.toISOString().slice(0, 10);
-      const usage = trips
+      const savings = trips
         .filter((t) => t.date && t.date.slice(0, 10) === dayStr)
         .reduce((sum, t) => sum + (t.co2Saved || t.co2_saved_kg || 0), 0);
       days.push({
         day: day.toLocaleDateString(undefined, { weekday: "short" }),
-        usage,
-        budget: dailyBudget,
+        savings,
+        goal: dailyBudget,
       });
     }
     return days;
@@ -36,26 +36,30 @@ const WeeklyCO2Chart = ({ trips, dailyBudget = 20 }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
-      const isOverBudget = data.usage > data.budget;
+      const metGoal = data.savings >= data.goal;
 
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
           <p className="font-medium text-gray-900">{label}</p>
           <p className="text-sm text-gray-600">
-            Usage:{" "}
-            <span className="font-medium">{data.usage.toFixed(1)} kg CO2</span>
+            Saved:{" "}
+            <span className="font-medium">
+              {data.savings.toFixed(1)} kg CO₂
+            </span>
           </p>
           <p className="text-sm text-gray-600">
-            Budget: <span className="font-medium">{data.budget} kg CO2</span>
+            Goal: <span className="font-medium">{data.goal} kg CO₂</span>
           </p>
           <p
             className={`text-sm font-medium ${
-              isOverBudget ? "text-red-600" : "text-green-600"
+              metGoal ? "text-blue-600" : "text-orange-600"
             }`}
           >
-            {isOverBudget
-              ? `Over by ${(data.usage - data.budget).toFixed(1)} kg`
-              : `Under by ${(data.budget - data.usage).toFixed(1)} kg`}
+            {metGoal
+              ? `Goal achieved! +${(data.savings - data.goal).toFixed(
+                  1
+                )} kg extra`
+              : `${(data.goal - data.savings).toFixed(1)} kg to reach goal`}
           </p>
         </div>
       );
@@ -63,52 +67,53 @@ const WeeklyCO2Chart = ({ trips, dailyBudget = 20 }) => {
     return null;
   };
 
-  // Calculate weekly stats
-  const totalUsage = weeklyData.reduce((sum, day) => sum + day.usage, 0);
-  const totalBudget = weeklyData.length * dailyBudget;
-  const daysOverBudget = weeklyData.filter(
-    (day) => day.usage > day.budget
+  // Calculate weekly stats and max value for Y-axis
+  const totalSavings = weeklyData.reduce((sum, day) => sum + day.savings, 0);
+  const totalGoal = weeklyData.length * dailyBudget;
+  const daysGoalMet = weeklyData.filter(
+    (day) => day.savings >= day.goal
   ).length;
+
+  // Calculate Y-axis domain to ensure goal line is always visible
+  const maxSavings = Math.max(...weeklyData.map((day) => day.savings));
+  const yAxisMax = Math.max(12, Math.ceil(maxSavings + 2));
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white">
       <div className="mb-6">
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">
-          Weekly Carbon Footprint Overview
-        </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <div className="text-sm text-blue-600 font-medium">Total Usage</div>
-            <div className="text-2xl font-bold text-blue-900">
-              {totalUsage.toFixed(1)} kg CO2
+          <div className="bg-green-50 p-4 rounded-lg">
+            <div className="text-sm text-green-600 font-medium">
+              Total Saved
+            </div>
+            <div className="text-2xl font-bold text-green-900">
+              {totalSavings.toFixed(1)} kg CO₂
             </div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="text-sm text-gray-600 font-medium">
-              Weekly Budget
-            </div>
-            <div className="text-2xl font-bold text-gray-900">
-              {totalBudget} kg CO2
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="text-sm text-blue-600 font-medium">Weekly Goal</div>
+            <div className="text-2xl font-bold text-blue-900">
+              {totalGoal} kg CO₂
             </div>
           </div>
           <div
             className={`p-4 rounded-lg ${
-              daysOverBudget > 0 ? "bg-red-50" : "bg-green-50"
+              daysGoalMet >= 4 ? "bg-blue-50" : "bg-orange-50"
             }`}
           >
             <div
               className={`text-sm font-medium ${
-                daysOverBudget > 0 ? "text-red-600" : "text-green-600"
+                daysGoalMet >= 4 ? "text-blue-600" : "text-orange-600"
               }`}
             >
-              Days Over Budget
+              Target Achieved
             </div>
             <div
               className={`text-2xl font-bold ${
-                daysOverBudget > 0 ? "text-red-900" : "text-green-900"
+                daysGoalMet >= 4 ? "text-blue-900" : "text-orange-900"
               }`}
             >
-              {daysOverBudget}/7
+              {daysGoalMet}/7
             </div>
           </div>
         </div>
@@ -126,33 +131,34 @@ const WeeklyCO2Chart = ({ trips, dailyBudget = 20 }) => {
               dataKey="day"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12, fill: "#6b7280" }}
+              tick={{ fontSize: 12, fill: "#6b7280", textAnchor: "middle" }}
             />
             <YAxis
+              domain={[0, yAxisMax]}
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: "#6b7280" }}
               label={{
-                value: "CO2 Usage (kg)",
+                value: "CO₂ Saved (kg)",
                 angle: -90,
                 position: "insideLeft",
               }}
             />
             <Tooltip content={<CustomTooltip />} />
 
-            {/* Budget reference line */}
+            {/* Goal reference line */}
             <ReferenceLine
               y={dailyBudget}
-              stroke="#ef4444"
+              stroke="#3b82f6"
               strokeDasharray="4 4"
               strokeWidth={2}
             />
 
-            <Bar dataKey="usage" radius={[4, 4, 0, 0]}>
+            <Bar dataKey="savings" radius={[4, 4, 0, 0]}>
               {weeklyData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.usage > entry.budget ? "#ef4444" : "#10b981"}
+                  fill={entry.savings >= entry.goal ? "#3b82f6" : "#10b981"}
                 />
               ))}
             </Bar>
@@ -161,25 +167,25 @@ const WeeklyCO2Chart = ({ trips, dailyBudget = 20 }) => {
       </div>
       {/* 
       {/* Legend and weekly summary */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-center items-start md:items-center gap-4">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span className="text-sm text-gray-600">Under Budget</span>
+            <span className="text-sm text-gray-600">Below Goal</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span className="text-sm text-gray-600">Over Budget</span>
+            <div className="w-4 h-4 bg-blue-500 rounded"></div>
+            <span className="text-sm text-gray-600">Goal Achieved</span>
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-1 bg-red-400 rounded"
+              className="w-4 h-1 bg-blue-400 rounded"
               style={{
                 backgroundImage:
-                  "repeating-linear-gradient(to right, #ef4444 0, #ef4444 4px, transparent 4px, transparent 8px)",
+                  "repeating-linear-gradient(to right, #3b82f6 0, #3b82f6 4px, transparent 4px, transparent 8px)",
               }}
             ></div>
-            <span className="text-sm text-gray-600">Daily Limit</span>
+            <span className="text-sm text-gray-600">Daily Goal</span>
           </div>
         </div>
       </div>
