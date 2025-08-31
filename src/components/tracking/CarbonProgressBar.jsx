@@ -1,25 +1,30 @@
 import React from "react";
 
-const CO2ProgressBar = ({
+const CarbonSavingsProgressBar = ({
   currentUsage = 12.5,
   dailyBudget = 20,
-  unit = "kg CO2",
+  unit = "kg CO₂",
 }) => {
-  const progressPercentage = Math.min((currentUsage / dailyBudget) * 100, 100);
-  const isOverBudget = currentUsage > dailyBudget;
+  // Rename variables for clarity - currentUsage is actually currentSavings
+  const currentSavings = currentUsage;
+  const dailySavingGoal = dailyBudget;
 
-  // Color logic: green when under 70%, yellow 70-90%, red when over 90% or over budget
+  const progressPercentage = Math.min(
+    (currentSavings / dailySavingGoal) * 100,
+    100
+  );
+  const hasMetGoal = currentSavings >= dailySavingGoal;
+
+  // Color logic: green when making good progress, blue when goal met/exceeded
   const getProgressColor = () => {
-    if (isOverBudget) return "bg-red-500";
-    if (progressPercentage >= 90) return "bg-red-400";
-    if (progressPercentage >= 70) return "bg-yellow-400";
-    return "bg-green-500";
+    if (hasMetGoal) return "bg-blue-500";
+    if (progressPercentage >= 75) return "bg-green-500";
+    if (progressPercentage >= 50) return "bg-green-400";
+    return "bg-yellow-300";
   };
 
   const getBackgroundColor = () => {
-    if (isOverBudget) return "bg-red-100";
-    if (progressPercentage >= 90) return "bg-red-50";
-    if (progressPercentage >= 70) return "bg-yellow-50";
+    if (hasMetGoal) return "bg-blue-50";
     return "bg-green-50";
   };
 
@@ -28,10 +33,10 @@ const CO2ProgressBar = ({
       <div className="mb-4">
         <div className="flex justify-between items-baseline">
           <span className="text-2xl font-bold text-gray-900">
-            {currentUsage.toFixed(1)} {unit}
+            {currentSavings.toFixed(1)} {unit}
           </span>
           <span className="text-sm text-gray-600">
-            of {dailyBudget} {unit}
+            of {dailySavingGoal} {unit} goal
           </span>
         </div>
       </div>
@@ -45,10 +50,10 @@ const CO2ProgressBar = ({
             className={`h-full transition-all duration-500 ease-out ${getProgressColor()}`}
             style={{ width: `${Math.min(progressPercentage, 100)}%` }}
           />
-          {/* Overflow indicator if over budget */}
-          {isOverBudget && (
+          {/* Achievement indicator if goal met/exceeded */}
+          {hasMetGoal && (
             <div
-              className="absolute top-0 left-0 h-full bg-red-600 opacity-20 animate-pulse"
+              className="absolute top-0 left-0 h-full bg-blue-600 opacity-20 animate-pulse"
               style={{ width: "100%" }}
             />
           )}
@@ -64,13 +69,14 @@ const CO2ProgressBar = ({
 
       {/* Status message */}
       <div className="mt-3 text-center">
-        {isOverBudget ? (
-          <div className="text-red-600 text-sm font-medium">
-            ⚠️ Over budget by {(currentUsage - dailyBudget).toFixed(1)} {unit}
+        {hasMetGoal ? (
+          <div className="text-blue-600 text-sm font-medium">
+            🎉 Goal achieved! Saved{" "}
+            {(currentSavings - dailySavingGoal).toFixed(1)} {unit} extra
           </div>
         ) : (
-          <div className="text-green-600 text-sm">
-            ✓ {(dailyBudget - currentUsage).toFixed(1)} {unit} remaining
+          <div className="text-green-700 text-sm">
+            {(dailySavingGoal - currentSavings).toFixed(1)} {unit} to reach goal
           </div>
         )}
       </div>
@@ -80,7 +86,7 @@ const CO2ProgressBar = ({
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
             <div className="text-xs text-gray-500 uppercase tracking-wide">
-              Used Today
+              Saved Today
             </div>
             <div className="text-lg font-semibold text-gray-900">
               {progressPercentage.toFixed(0)}%
@@ -88,14 +94,14 @@ const CO2ProgressBar = ({
           </div>
           <div>
             <div className="text-xs text-gray-500 uppercase tracking-wide">
-              Budget Status
+              Goal Status
             </div>
             <div
               className={`text-lg font-semibold ${
-                isOverBudget ? "text-red-600" : "text-green-600"
+                hasMetGoal ? "text-blue-600" : "text-green-600"
               }`}
             >
-              {isOverBudget ? "Over" : "Under"}
+              {hasMetGoal ? "Achieved" : "In Progress"}
             </div>
           </div>
         </div>
@@ -104,4 +110,4 @@ const CO2ProgressBar = ({
   );
 };
 
-export default CO2ProgressBar;
+export default CarbonSavingsProgressBar;
