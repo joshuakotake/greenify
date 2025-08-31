@@ -50,13 +50,6 @@ const CarbonSavingsProgressBar = ({
             className={`h-full transition-all duration-500 ease-out ${getProgressColor()}`}
             style={{ width: `${Math.min(progressPercentage, 100)}%` }}
           />
-          {/* Achievement indicator if goal met/exceeded */}
-          {hasMetGoal && (
-            <div
-              className="absolute top-0 left-0 h-full bg-blue-600 opacity-20 animate-pulse"
-              style={{ width: "100%" }}
-            />
-          )}
         </div>
 
         {/* Percentage text overlay */}
